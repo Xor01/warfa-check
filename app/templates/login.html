@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+  {% block title %}تسجيل الدخول{% endblock %}
+  <body>
+    {% block body %}
+    <div class="container mt-5">
+      <div class="flash-box">
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+          {% if messages %} 
+            {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+        {% endfor %} 
+          {% endif %}
+           {% endwith %}
+      </div>
+    </div>
+    <div class="container form-container">
+      <div>
+        <h1 class="card-title">يرجى تسجيل الدخول</h1>
+        <form method="POST" action="{{ url_for('login') }}">
+          <div class="form-group">
+            {{ form.hidden_tag() }} {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control", placeholder="name@example.com",
+            type="email") }}
+          </div>
+          <div class="form-group">
+            {{ form.password.label(class="form-label") }} {{
+            form.password(class="form-control", placeholder="كلمة المرور") }}
+          </div>
+          <div class="form-group form-check mb-3">
+            {{ form.remember(class="form-check-input") }}
+            {{ form.remember.label(class="form-check-label") }}
+            </div>
+            <div id="s">
+            <small
+              >ليس لديك حساب؟
+              <a href="{{ url_for('register') }}">إنشاء حساب</a></small
+            >
+          </div>
+          <div class="d-flex justify-content-center mt-3">
+            {{ form.submit(class="btn btn-secondary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% endblock %}
+  </body>
+</html>

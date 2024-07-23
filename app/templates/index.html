@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}تحقق من التفاعل{% endblock %}
+  {% block body %}
+    {% if True %}
+    <div class="container mt-5">
+      <div class="flash-box">
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+          {% if messages %} 
+            {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+        {% endfor %} 
+          {% endif %}
+           {% endwith %}
+      </div>
+      <h1 class="card-title">
+        تحقق مما إذا كان الدواء أو العشبة يؤثر على دواء تخثر الدم
+      </h1>
+      <div class="form-container">
+        <form method="post" enctype="multipart/form-data" onsubmit="showLoadingAnimation()">
+          <div class="form-group">
+            <label for="file" class="form-label"
+              >حمل صورة الدواء أو العشبة:</label
+            >
+            <input type="file" class="form-control" id="file" name="file" />
+          </div>
+          <div class="form-group">
+            <label for="text" class="form-label"
+              >ادخل اسم الدواء أو العشبة:</label
+            >
+            <input type="text" class="form-control" id="text" name="text" />
+          </div>
+          <div class="form-group d-flex align-items-center">
+            <label for="voice" class="form-label mb-0" style="margin-left: 10px;">استخدم صوتك:</label>
+            <div class="d-flex align-items-center" id="voice">
+              <button
+                type="button"
+                class="btn btn-outline-secondary me-2"
+                id="start-record-btn"
+                onclick="startVoiceRecognition()"
+              >
+                ابدأ التحدث
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                id="stop-record-btn"
+                style="display: none"
+                onclick="stopVoiceRecognition()"
+              >
+                إيقاف التسجيل
+              </button>
+              
+              <span id="recording-indicator" class="ms-2">جاري التسجيل...</span>
+            </div>
+          </div>
+          <audio id="audio-playback" controls style="display: none; margin-top: 10px;"></audio>
+          {% if error %}
+          <div class="alert alert-warning alert-dismissible fade show" role="alert"> <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button> {{ error }}</div>
+          {% endif %}
+          <input type="hidden" id="voice-input" name="voice" />
+          
+          <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-secondary">تحقق</button>
+          </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+      يرجى
+      <a href="{{ url_for('login') }}" class="alert-link">تسجيل الدخول</a>
+      للوصول إلى مدقق التجلط.
+    </div>
+    {% endif %}
+
+    <!-- Loading Animation Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script>
+      let mediaRecorder;
+      let audioChunks = [];
+
+      function startVoiceRecognition() {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then((stream) => {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.start();
+
+            document.getElementById("recording-indicator").style.display =
+              "inline";
+            document.getElementById("start-record-btn").style.display = "none";
+            document.getElementById("stop-record-btn").style.display = "inline";
+
+            mediaRecorder.ondataavailable = (event) => {
+              audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+              const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+              audioChunks = [];
+              const audioUrl = URL.createObjectURL(audioBlob);
+              const audioElement = document.getElementById("audio-playback");
+              audioElement.style.marginBottom = "20px"
+              audioElement.src = audioUrl;
+              audioElement.style.display = "block";
+
+              const reader = new FileReader();
+              reader.readAsDataURL(audioBlob);
+              reader.onloadend = function () {
+                document.getElementById("voice-input").value = reader.result;
+              };
+            };
+          })
+          .catch((error) =>
+            console.error("Error accessing audio media:", error)
+          );
+      }
+
+      function stopVoiceRecognition() {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+          document.getElementById("recording-indicator").style.display = "none";
+          document.getElementById("start-record-btn").style.display = "inline";
+          document.getElementById("stop-record-btn").style.display = "none";
+      
+          let tracks = mediaRecorder.stream.getTracks();
+          tracks.forEach(track => track.stop());
+        }
+      }
+
+      function showLoadingAnimation() {
+        document.getElementById("loading-overlay").style.display = "flex";
+      }
+    </script>
+  {% endblock %}
+</html>
