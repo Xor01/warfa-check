@@ -239,5 +239,5 @@ def recognize_speech(audio_path):
             prompt="لغة عربية"
         )
     print("text from transaction: ", transcription)
-    os.remove(audio_file)
+    os.remove(audio_path)
     return transcription
