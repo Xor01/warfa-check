@@ -236,8 +236,8 @@ def recognize_speech(audio_path):
             model="whisper-1",
             file=audio_file,
             response_format="text",
-            prompt="لغة عربية"
+            prompt="حاول التعرف على اللغة العربية اولا، في حالة فشلك انتقل للغة الانجليزية"
         )
     print("text from transaction: ", transcription)
-    os.remove(audio_file)
+    os.remove(audio_path)
     return transcription
