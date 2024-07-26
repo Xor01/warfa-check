@@ -119,22 +119,21 @@ body {
   border-radius: 50%;
 }
 .navbar-img {
-  height: 60px;
-  margin-left: 20px;
-  border-radius: 50%;
+  height: 4.5rem;
+  border-radius: 35%;
 }
 @media only screen and (max-width: 600px) {
   .navbar-img {
-    height: 60px; 
+    height: 65px; 
     border-radius: 50%;
-    margin-right: 3.2rem;
+    /* margin-right: 3.2rem; */
   }
 }
 @media only screen and (max-width: 1000px) {
   .navbar-img {
-    height: 60px;
+    height: 65px;
     border-radius: 50%;
-    margin-right: 3.2rem;
+    /* margin-right: 3.2rem; */
   }
 }
 .loading-overlay {
@@ -158,4 +157,18 @@ body {
   max-width: fit-content;
   margin-left: auto;
   margin-right: auto;
+}
+.nav-images{
+  justify-content: left;
+}
+
+#image-preview {
+  margin-top: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  width: 180px;
+  height: 180px;
+  justify-content: center;
 }
