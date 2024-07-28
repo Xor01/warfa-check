@@ -77,7 +77,7 @@ def eng_index():
         elif 'text' in request.form and request.form['text'].strip() != '':
             text = request.form['text'].strip().lower()
             effect, info = get_interaction_from_name(text, "en")
-            return render_template('result.html', result=effect, name=text.capitalize(), info=info)
+            return render_template('en/result.html', result=effect, name=text.capitalize(), info=info)
         elif 'voice' in request.form and request.form['voice'].strip() != '':
             voice_data = request.form['voice']
             audio_path = os.path.join(app.config['UPLOAD_FOLDER'] + 'voices', f"{uuid.uuid4()}.wav")
@@ -86,7 +86,7 @@ def eng_index():
             try:
                 transcript = recognize_speech(audio_path)
                 effect, info = get_interaction_from_name(transcript)
-                return render_template('result.html', result=effect, name=transcript, info=info)
+                return render_template('en/result.html', result=effect, name=transcript, info=info)
             except Exception as e:
                 print(f"Error: {e}")
                 flash("Error at processing the voice, please try again later.", "danger")
