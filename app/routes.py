@@ -45,7 +45,7 @@ def index():
             with open(audio_path, "wb") as audio_file:
                 audio_file.write(base64.b64decode(voice_data.split(',')[1]))
             try:
-                transcript = recognize_speech(audio_path)
+                transcript = recognize_speech(audio_path, "ar")
                 effect, info = get_interaction_from_name(transcript, "ar")
                 return render_template('result.html', result=effect, name=transcript, info=info)
             except Exception as e:
@@ -84,7 +84,7 @@ def eng_index():
             with open(audio_path, "wb") as audio_file:
                 audio_file.write(base64.b64decode(voice_data.split(',')[1]))
             try:
-                transcript = recognize_speech(audio_path)
+                transcript = recognize_speech(audio_path, "en")
                 effect, info = get_interaction_from_name(transcript, "en")
                 return render_template('en/result.html', result=effect, name=transcript, info=info)
             except Exception as e:
@@ -183,13 +183,17 @@ def get_name_from_image(image_path, lang):
     return response.json()['choices'][0]['message']['content'].strip()
 
 
-def recognize_speech(audio_path):
+def recognize_speech(audio_path, lang):
+    if lang == "en":
+        prompt = "Match English language."
+    else:
+        prompt = "تعرف على اللغة العربية"
     with open(audio_path, "rb") as audio_file:
         transcription = client.audio.transcriptions.create(
             model="whisper-1",
             file=audio_file,
             response_format="text",
-            prompt="حاول التعرف على اللغة العربية اولا، في حالة فشلك انتقل للغة الانجليزية"
+            prompt=prompt
         )
     print("text from transaction: ", transcription)
     os.remove(audio_path)

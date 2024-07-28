@@ -155,9 +155,12 @@ interaction_prompt_ar = """
 
         في حالة وجود خطأ في المدخل قم بتصحيحه:
         مثال:
-        بندو اكستر
-        يصبح: بنادول اكسترا
-        
+بياندول
+Did You mean "Panadol."? If that is the case, no, it does not affect blood clotting. Risk level: none
+هل تعني "بنادول"؟ في هذه الحالة ,لا يؤثر على تخثر الدم. درجة الخطورة: لا توجد,
+        لو كان لديك معلومات إضافية ارفقها بالتنسيق التالي:
+        معلومات إضافية: هنا المعلومات الإضافية
+
         تحقق من إجابتك
         """
 
@@ -205,10 +208,13 @@ The input is incorrect. Please enter a medicine, food, or herb.
 
 The input is incorrect. Please enter a medicine, food, or herb.
 
-In case of an incorrect entry, correct it:
+In case of an incorrect entry that you find something similar, correct it this way:
 Example:
-Bando Extra
-Becomes: Panadol Extra
+Bandol
+Did You mean "Panadol."? If that is the case, no, it does not affect blood clotting. Risk level: none
+
+If you have additional information, include it in the following format:
+Additional information: Here is the additional information
 
 You have to Verify your answer before.
         """
