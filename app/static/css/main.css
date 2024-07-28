@@ -1,7 +1,7 @@
 body {
   background-color: #fefef5;
   font-family: "Arial", sans-serif;
-  text-align: right;
+  
   margin: 0;
 }
 .navbar {
@@ -171,4 +171,12 @@ body {
   width: 180px;
   height: 180px;
   justify-content: center;
+}
+
+
+
+.language-label {
+    font-size: 1rem;
+    color: #000; /* Adjust the color as needed */
+    text-decoration: none;
 }

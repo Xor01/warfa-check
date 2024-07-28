@@ -5,7 +5,7 @@ import uuid
 import requests
 from flask import render_template, redirect, url_for, flash, request
 from openai import OpenAI
-
+from app.prompts import *
 from app import app
 
 api_key = os.getenv('OPENAI_API_KEY')
@@ -16,9 +16,10 @@ headers = {
     "Authorization": f"Bearer {client.api_key}"
 }
 
-
+lang = ""
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    lang = "ar"
     if request.method == 'POST':
         if 'file' in request.files and request.files['file'].filename != '':
             file = request.files['file']
@@ -28,8 +29,8 @@ def index():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'] + 'images', unique_filename)
             file.save(file_path)
             try:
-                product_name = get_name_from_image(file_path)
-                effect, info = get_interaction_from_name(product_name)
+                product_name = get_name_from_image(file_path, "ar")
+                effect, info = get_interaction_from_name(product_name, "ar")
                 return render_template('result.html', result=effect, name=product_name, info=info)
             except Exception as e:
                 print(f"Error: {e}")
@@ -56,68 +57,54 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/en', methods=['GET', 'POST'])
+def eng_index():
+    if request.method == 'POST':
+        if 'file' in request.files and request.files['file'].filename != '':
+            file = request.files['file']
+            original_filename = file.filename
+            extension = os.path.splitext(original_filename)[1]
+            unique_filename = f"{uuid.uuid4()}{extension}"
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'] + 'images', unique_filename)
+            file.save(file_path)
+            try:
+                product_name = get_name_from_image(file_path, "en")
+                effect, info = get_interaction_from_name(product_name, "en")
+                return render_template('en/result.html', result=effect, name=product_name, info=info)
+            except Exception as e:
+                print(f"Error: {e}")
+                flash("Error at processing, please try again later.", "danger")
+        elif 'text' in request.form and request.form['text'].strip() != '':
+            text = request.form['text'].strip().lower()
+            effect, info = get_interaction_from_name(text)
+            return render_template('result.html', result=effect, name=text.capitalize(), info=info)
+        elif 'voice' in request.form and request.form['voice'].strip() != '':
+            voice_data = request.form['voice']
+            audio_path = os.path.join(app.config['UPLOAD_FOLDER'] + 'voices', f"{uuid.uuid4()}.wav")
+            with open(audio_path, "wb") as audio_file:
+                audio_file.write(base64.b64decode(voice_data.split(',')[1]))
+            try:
+                transcript = recognize_speech(audio_path)
+                effect, info = get_interaction_from_name(transcript)
+                return render_template('result.html', result=effect, name=transcript, info=info)
+            except Exception as e:
+                print(f"Error: {e}")
+                flash("Error at processing the voice, please try again later.", "danger")
+        else:
+            print("here")
+            return render_template('index.html', error="Please provide in input to be processed.")
+    return render_template('en/index.html')
+
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-def get_interaction_from_name(name):
-    prompt = """
-         او يحتوي على كمية كبيرة من فيتامين  سوف أقدم لك اسم غذاء أو دواء أو نوع من الأعشاب. يرجى التحقق مما إذا كان يحتوي على عنصر يؤثر على دواء تخثر الدم المعروف بالوارفارين (Warfarin) او يحتوي على كمية كبيرة من فيتامين ك (K) أو لا يجب أن يكون الرد بالشكل التالي:
-
-        - إذا كان العنصر يؤثر على تخثر الدم: "{اسم العنصر}, نعم، يؤثر على تخثر الدم. درجة الخطورة: درجة الخطورة."
-        - إذا كان العنصر لا يؤثر على تخثر الدم: "{اسم العنصر}, لا، لا يؤثر على تخثر الدم. درجة الخطورة: درجة الخطورة."
-
-        يجب أن تكون درجة الخطورة مذكورة فقط كـ "منخفضة" أو "متوسطة" أو "مرتفعة" بدون إضافة اللون أو أي تعليقات إضافية.
-
-        لو كان لديك معلومات إضافية ارفقها بالتنسيق التالي:
-        معلومات إضافية: هنا المعلومات الإضافية
-        ابحث باللغتين العربية والإنجليزية عن ما اذا كان الدواء يسبب تفاعل مع warfarin اذكر الكمية اذا كانت قليلة ام كثيرة لتسبيب تفاعل.
-        **أمثلة للإجابات الصحيحة:**
-
-        - إذا كان اسم العنصر "أسبرين":
-
-        أسبرين, نعم، يؤثر على تخثر الدم. درجة الخطورة: مرتفعة
-
-
-         - إذا كان اسم العنصر "سيبروفلوكساسين":
-
-        سيبروفلوكساسين, نعم، يؤثر على تخثر الدم. درجة الخطورة: مرتفعة
-
-
-        - إذا كان اسم العنصر "خس":
-
-        خس, نعم، يؤثر على تخثر الدم. درجة الخطورة: مرتفعة
-
-
-
-        - إذا كان اسم العنصر "فيتامين C":
-
-        فيتامين C, لا، لا يؤثر على تخثر الدم. درجة الخطورة: منخفضة
-
-
-        - إذا كان اسم العنصر "زنجبيل":
-
-        زنجبيل, نعم، يؤثر على تخثر الدم. درجة الخطورة: متوسطة
-
-
-        - إذا كان المدخل غير صحيح مثل "شجرة" أو "قط":
-
-        المدخل غير صحيح. يرجى إدخال دواء أو غذاء أو نوع من الأعشاب.
-
-        
-        - إذا كان المدخل غير صحيح مثل "تحية مثل السلام عليكم" أو "صباح الخير":
-
-        المدخل غير صحيح. يرجى إدخال دواء أو غذاء أو نوع من الأعشاب.
-
-        في حالة وجود خطأ في المدخل قم بتصحيحه:
-        مثال:
-        بندو اكستر
-        يصبح: بنادول اكسترا
-        
-        تحقق من إجابتك
-        """
-        
+def get_interaction_from_name(name, lang):
+    if lang == "en":
+        prompt = interaction_prompt_en
+    else:
+        prompt = interaction_prompt_ar
 
     payload = {
         "model": "gpt-4o",
@@ -140,72 +127,33 @@ def get_interaction_from_name(name):
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     result = response.json()['choices'][0]['message']['content'].strip()
     print(response.text)
-    try:
-        effect, info = result.split("معلومات إضافية:", 1)
-        effect = effect.strip()
-        info = info.strip()
-    except ValueError:
-        effect = result
-        info = ".المعلومات إضافية غير متوفرة"
+    
+    if lang == "ar":
+        try:
+            effect, info = result.split("معلومات إضافية:", 1)
+            effect = effect.strip()
+            info = info.strip()
+        except ValueError:
+            effect = result
+            info = ".المعلومات إضافية غير متوفرة"
+    else:
+        try:
+            effect, info = result.split("Additional information:", 1)
+            effect = effect.strip()
+            info = info.strip()
+        except ValueError:
+            effect = result
+            info = "Additional information is not available:"
 
     return effect, info
 
 
-def get_name_from_image(image_path):
-    prompt = """
-            سوف أرسل لك صورة تحتوي على عبوة دواء أو علبة دواء او نوع من الطعام. قم بما يلي:
-
-            1. **تحديد المحتوى:** انظر بدقة إلى الصورة وحاول التعرف على اسم الدواء أو تفاصيله المكتوبة على العبوة. حاول تحديد الاسم الأكثر وضوحاً إذا كان هناك أكثر من اسم.
-
-            2. **تنسيق الإجابة:** بعد تحديد الاسم، قم بإرسال الإجابة بالشكل التالي:
-               - اكتب اسم الدواء بشكل دقيق. لا تضع أي علامات إضافية مثل الأقواس أو علامات التنصيص.
-
-            3. **التعامل مع الأخطاء:** إذا لم تتمكن من التعرف على المحتوى بسبب سوء جودة الصورة أو عدم وضوح المعلومات، قم بإرسال الرد التالي:
-               - "الصورة غير واضحة أو لا تحتوي على معلومات كافية. يرجى إرسال صورة أوضح للعبوة."
-
-               قم بالتأكد من المعلومات الصحيح عدة مرات قبل ارسالها لي
-
-            **مثال على الرد الصحيح:**
-            إذا كانت الصورة تحتوي على عبوة دواء تُظهر "أموكسيسيلين":
-
-            أموكسيسيلين
-
-
-            إذا كانت الصورة غير واضحة:
-
-            الصورة غير واضحة أو لا تحتوي على معلومات كافية. يرجى إرسال صورة أوضح للعبوة.
-
-
-            **مثال على الرد الصحيح:**
-            إذا كانت الصورة تحتوي على "نعناع":
-
-            نعناع
-
-
-            **مثال على الرد الصحيح:**
-            إذا كانت الصورة تحتوي على "بقدونس":
-
-            بقدونس
-
-            
-            **مثال على الرد الصحيح:**
-            إذا كانت الصورة تحتوي على "صورة قطة":
-
-            لم يتم التعرف على الصورة
-
-            
-             **مثال على الرد الصحيح:**
-            إذا كانت الصورة تحتوي على "صورة منزل":
-
-            لم يتم التعرف على الصورة
-
-            
-             **مثال على الرد الصحيح:**
-            إذا كانت الصورة تحتوي على "صورة شارع":
-
-            لم يتم التعرف على الصورة
-
-            """
+def get_name_from_image(image_path, lang):
+    if lang == "en":
+        prompt = image_prompt_en
+    else:
+        prompt = image_prompt_ar
+    
     base64_image = encode_image(image_path)
     os.remove(image_path)
     
