@@ -11,7 +11,7 @@
               <h1 class="card-title">Result to: {{ name }}</h1>
               {% if result %}
               <p
-                class="card-text {% if 'low' in result %}risk-low {% elif 'medium' in result %}risk-medium {% elif 'high' in result %}risk-high {% endif %}"
+                class="card-text {% if 'none' in result %}risk-low {% elif 'medium' in result %}risk-medium {% elif 'high' in result %}risk-high {% endif %}"
               >
                 {{ result }}
               </p>

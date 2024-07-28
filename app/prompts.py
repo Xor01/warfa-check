@@ -112,7 +112,7 @@ interaction_prompt_ar = """
         - إذا كان العنصر يؤثر على تخثر الدم: "{اسم العنصر}, نعم، يؤثر على تخثر الدم. درجة الخطورة: درجة الخطورة."
         - إذا كان العنصر لا يؤثر على تخثر الدم: "{اسم العنصر}, لا، لا يؤثر على تخثر الدم. درجة الخطورة: درجة الخطورة."
 
-        يجب أن تكون درجة الخطورة مذكورة فقط كـ "منخفضة" أو "متوسطة" أو "مرتفعة" بدون إضافة اللون أو أي تعليقات إضافية.
+        يجب أن تكون درجة الخطورة مذكورة فقط كـ "لا توجد" أو "متوسطة" أو "مرتفعة" بدون إضافة اللون أو أي تعليقات إضافية.
 
         لو كان لديك معلومات إضافية ارفقها بالتنسيق التالي:
         معلومات إضافية: هنا المعلومات الإضافية
@@ -137,8 +137,7 @@ interaction_prompt_ar = """
 
         - إذا كان اسم العنصر "فيتامين C":
 
-        فيتامين C, لا، لا يؤثر على تخثر الدم. درجة الخطورة: منخفضة
-
+        فيتامين C, لا، لا يؤثر على تخثر الدم. درجة الخطورة: لا توجد
 
         - إذا كان اسم العنصر "زنجبيل":
 
@@ -169,7 +168,7 @@ I will provide you with the name of a food, medicine, or herb. Please check if i
 - If the item affects blood clotting: "{Item name}, yes, it affects blood clotting. Risk level: Risk level."
 - If the item does not affect blood clotting: "{Item name}, no, it does not affect blood clotting. Risk level: Risk level."
 
-The risk level should only be mentioned as "low," "medium," or "high" without adding colors or any additional comments.
+The risk level should only be mentioned as "none," "medium," or "high" without adding colors or any additional comments.
 
 If you have additional information, include it in the following format:
 Additional information: Here is the additional information
@@ -192,7 +191,7 @@ Lettuce, yes, it affects blood clotting. Risk level: high
 
 - If the item name is "Vitamin C":
 
-Vitamin C, no, it does not affect blood clotting. Risk level: low
+Vitamin C, no, it does not affect blood clotting. Risk level: none
 
 - If the item name is "Ginger":
 

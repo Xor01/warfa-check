@@ -9,7 +9,7 @@
               <h1 class="card-title">النتيجة لـ {{ name }}</h1>
               {% if result %}
               <p
-                class="card-text {% if 'منخفضة' in result %}risk-low {% elif 'متوسطة' in result %}risk-medium {% elif 'مرتفعة' in result %}risk-high {% endif %}"
+                class="card-text {% if 'لاتوجد' in result %}risk-low {% elif 'متوسطة' in result %}risk-medium {% elif 'مرتفعة' in result %}risk-high {% endif %}"
               >
                 {{ result }}
               </p>

@@ -37,7 +37,7 @@ def index():
                 flash("خطأ في معالجة الصورة. حاول مرة أخرى.", "danger")
         elif 'text' in request.form and request.form['text'].strip() != '':
             text = request.form['text'].strip().lower()
-            effect, info = get_interaction_from_name(text)
+            effect, info = get_interaction_from_name(text, "ar")
             return render_template('result.html', result=effect, name=text.capitalize(), info=info)
         elif 'voice' in request.form and request.form['voice'].strip() != '':
             voice_data = request.form['voice']
@@ -76,7 +76,7 @@ def eng_index():
                 flash("Error at processing, please try again later.", "danger")
         elif 'text' in request.form and request.form['text'].strip() != '':
             text = request.form['text'].strip().lower()
-            effect, info = get_interaction_from_name(text)
+            effect, info = get_interaction_from_name(text, "en")
             return render_template('result.html', result=effect, name=text.capitalize(), info=info)
         elif 'voice' in request.form and request.form['voice'].strip() != '':
             voice_data = request.form['voice']
