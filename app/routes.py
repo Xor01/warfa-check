@@ -46,7 +46,7 @@ def index():
                 audio_file.write(base64.b64decode(voice_data.split(',')[1]))
             try:
                 transcript = recognize_speech(audio_path)
-                effect, info = get_interaction_from_name(transcript)
+                effect, info = get_interaction_from_name(transcript, "ar")
                 return render_template('result.html', result=effect, name=transcript, info=info)
             except Exception as e:
                 print(f"Error: {e}")
@@ -85,7 +85,7 @@ def eng_index():
                 audio_file.write(base64.b64decode(voice_data.split(',')[1]))
             try:
                 transcript = recognize_speech(audio_path)
-                effect, info = get_interaction_from_name(transcript)
+                effect, info = get_interaction_from_name(transcript, "en")
                 return render_template('en/result.html', result=effect, name=transcript, info=info)
             except Exception as e:
                 print(f"Error: {e}")
