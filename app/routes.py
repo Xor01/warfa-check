@@ -126,7 +126,7 @@ def get_interaction_from_name(name, lang):
     
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-    result = response.json()['choices'][0]['message']['content'].strip()
+    result = response.json()['choices'][0]['message']
     print(response.text)
     
     if lang == "ar":
@@ -196,6 +196,6 @@ def recognize_speech(audio_path, lang):
             response_format="text",
             prompt=prompt
         )
-    print("text from transaction: ", transcription)
+    print("text from transaction: ", transcription.text)
     os.remove(audio_path)
-    return transcription
+    return transcription.text.strip()
