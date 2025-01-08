@@ -8,8 +8,9 @@ from openai import OpenAI
 from app.prompts import *
 from app import app
 
-api_key = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key=api_key)
+API_KEY = os.getenv('OPENAI_API_KEY')
+MODEL_NAME = os.getenv('MODEL_NAME')
+client = OpenAI(api_key=API_KEY)
 
 headers = {
     "Content-Type": "application/json",
@@ -107,7 +108,7 @@ def get_interaction_from_name(name, lang):
         prompt = interaction_prompt_ar
 
     payload = {
-        "model": "gpt-4o",
+        "model": MODEL_NAME,
         "messages": [
             {
                 "role": "system",
