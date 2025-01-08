@@ -126,7 +126,7 @@ def get_interaction_from_name(name, lang):
     
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-    result = response.json()['choices'][0]['message']
+    result = response.json()['choices'][0]['message']['content'].strip()
     print(response.text)
     
     if lang == "ar":
@@ -181,7 +181,7 @@ def get_name_from_image(image_path, lang):
         "max_tokens": 20
     }
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-    return response.json()['choices'][0].strip()
+    return response.json()['choices'][0]['message']['content'].strip()
 
 
 def recognize_speech(audio_path, lang):
@@ -196,6 +196,6 @@ def recognize_speech(audio_path, lang):
             response_format="text",
             prompt=prompt
         )
-    print("text from transaction: ", transcription.text)
+    print("text from transaction: ", transcription)
     os.remove(audio_path)
-    return transcription.text.strip()
+    return transcription.strip()
