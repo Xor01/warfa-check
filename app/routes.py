@@ -181,7 +181,7 @@ def get_name_from_image(image_path, lang):
         "max_tokens": 20
     }
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-    return response.json()['choices'][0]['message']['content'].strip()
+    return response.json()['choices'][0].strip()
 
 
 def recognize_speech(audio_path, lang):
