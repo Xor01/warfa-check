@@ -1,0 +1,11 @@
+{
+  "heading": "Check if the drug or herb affects blood clotting medication",
+  "uploadImage": "Upload image to check",
+  "appName": "Warfa Check",
+  "searchByName": "Search by drug name",
+  "appDescription": "Warfa Check is a free and open-source application that allows you to check the validity of your Warfa ID.",
+  "appVersion": "Version {{version}}",
+  "appTitle": "Warfa Check - Version {{version}}",
+  "appSubtitle": "Check the validity of your Warfa ID",
+  "appWebsite": "Visit our website for more information"
+}

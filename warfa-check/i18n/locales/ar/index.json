@@ -1,0 +1,11 @@
+{
+  "heading": "تحقق مما إذا كان الدواء أو العشبة يؤثر على دواء تخثر الدم",
+  "uploadImage": " قم بتحميل الصورة للتحقق",
+  "searchByName": "ابحث عن اسم الدواء",
+  "appName": "Warfa Check",
+  "appDescription": "Warfa Check is a free and open-source application that allows you to check the validity of your Warfa ID.",
+  "appVersion": "Version {{version}}",
+  "appTitle": "Warfa Check - Version {{version}}",
+  "appSubtitle": "Check the validity of your Warfa ID",
+  "appWebsite": "Visit our website for more information"
+}

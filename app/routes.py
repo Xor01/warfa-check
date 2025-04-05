@@ -198,4 +198,4 @@ def recognize_speech(audio_path, lang):
         )
     print("text from transaction: ", transcription)
     os.remove(audio_path)
-    return transcription.strip()
+    return transcription
